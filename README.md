@@ -1,7 +1,8 @@
 # MishkaSocial
-MishkaSocial is a plugin for MishkaCms as a social networking gateway
+MishkaSocial is a plugin for [MishkaCms](https://github.com/mishka-group/mishka-cms) as a social networking gateway
 
 ## Social Auth
+Authentication with social networks connection is one of important part of this library. We use Ueberauth library to do this, for example you can log in with Google and GitHub without password or registering without fulling fields.
 
 ### Put these below lines to your project config file
 ```elixir 
