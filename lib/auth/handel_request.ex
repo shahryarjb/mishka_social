@@ -107,8 +107,22 @@ defmodule MishkaSocial.Auth.HandelRequest do
     |> redirect(to: "#{MishkaSocial.router().live_path(conn, MishkeInstallerDeveloperWeb.LiveTestPageOne)}")
   end
 
-  defp register(_auth, _conn) do
+  defp register(auth, conn) do
+    with {{:ok, :cms_module_loads, user_module}, :user} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user},
+         {:ok, :add, _error_tag, _repo_data} <- user_module.create(%{full_name: auth.info.name, email: auth.info.email}) do
 
+        callback(%{assigns: %{ueberauth_auth: auth}}, conn)
+    else
+      {{:error, :cms_module_loads, msg}, _} ->
+        conn
+        |> put_flash(:error, msg)
+        |> redirect(to: "/")
+
+      _ ->
+        conn
+        |> put_flash(:error, "An unhandled error happened, Please register in our site directly, after registration you can connect your social networks to your account.")
+        |> redirect(to: "/")
+    end
   end
 
   defp renew_session(conn) do
