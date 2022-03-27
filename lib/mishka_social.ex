@@ -14,4 +14,22 @@ defmodule MishkaSocial do
   def auth(:api, _conn) do
     # TODO: It should cover either login or register
   end
+
+  def get_config(item) do
+    :mishka_social
+    |> Application.fetch_env!(:social)
+    |> Keyword.fetch!(item)
+  end
+
+  def router, do: MishkaInstaller.get_config(:html_router)
+
+  def cms_module_loads(module) do
+    case Code.ensure_compiled(module) do
+      {:module, _} -> {:ok, :cms_module_loads, module}
+      {:error, _} ->
+        {:error, :cms_module_loads,
+        "This library should be under MishkaCMS's apps. Hence, the mix file you target should have access to mishka_conetent and mishka_user"
+      }
+    end
+  end
 end
