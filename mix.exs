@@ -24,7 +24,8 @@ defmodule MishkaSocial.MixProject do
       {:ueberauth, "~> 0.7.0"},
       {:ueberauth_google, "~> 0.10.1"},
       {:ueberauth_github, "~> 0.8.1"},
-      {:phoenix, "~> 1.6"}
+      {:phoenix, "~> 1.6"},
+      {:phoenix_live_view, "~> 0.17.7"}
     ]
   end
 end

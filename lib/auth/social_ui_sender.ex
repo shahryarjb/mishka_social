@@ -1,5 +1,6 @@
 defmodule MishkaSocial.Auth.SocailUiSender do
-  use MishkeInstallerDeveloperWeb, :live_component
+  use Phoenix.LiveComponent
+  use Phoenix.HTML
   alias MishkaInstaller.Reference.OnUserBeforeLogin
 
   @spec render(Phoenix.LiveView.Socket.assigns()) :: Phoenix.LiveView.Rendered.t()
