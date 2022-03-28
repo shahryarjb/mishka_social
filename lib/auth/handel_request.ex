@@ -11,23 +11,16 @@ defmodule MishkaSocial.Auth.HandelRequest do
     |> halt()
   end
 
-  def handle_social_sender(%MishkaSocial.Auth.Strategy{conn: conn}) do
-    conn
-    |> put_flash(:error, "Your social network is not connected or it is invalid.")
-    |> redirect(to: "#{MishkaSocial.router().live_path(conn, MishkeInstallerDeveloperWeb.LiveTestPageOne)}")
-  end
+  def handle_social_sender(%MishkaSocial.Auth.Strategy{conn: conn}), do: invalid_social_integrations(conn)
 
+  @spec handel_social_callback(MishkaSocial.Auth.Strategy.t()) :: Plug.Conn.t()
   def handel_social_callback(%MishkaSocial.Auth.Strategy{conn: conn, endpoint: "html", id: social, callback: callback}) when social in @social_integrations do
     Map.merge(conn, %{request_path: "/auth/#{social}/callback", method: "GET"})
     |> Ueberauth.call(Ueberauth.init(callback |> Map.to_list))
     |> callback(conn)
   end
 
-  def handel_social_callback(%MishkaSocial.Auth.Strategy{conn: conn}) do
-    conn
-    |> put_flash(:error, "Your social network is not connected or it is invalid.")
-    |> redirect(to: "#{MishkaSocial.router().live_path(conn, MishkeInstallerDeveloperWeb.LiveTestPageOne)}")
-  end
+  def handel_social_callback(%MishkaSocial.Auth.Strategy{conn: conn}), do: invalid_social_integrations(conn)
 
   # When your authentication is success, you get information about a user like this:
   # ueberauth_auth: %Ueberauth.Auth{
@@ -109,7 +102,10 @@ defmodule MishkaSocial.Auth.HandelRequest do
 
   defp register(auth, conn) do
     with {{:ok, :cms_module_loads, user_module}, :user} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user},
-         {:ok, :add, _error_tag, _repo_data} <- user_module.create(%{full_name: auth.info.name, email: auth.info.email}) do
+         {:ok, :add, _error_tag, repo_data} <- user_module.create(%{full_name: auth.info.name, email: auth.info.email}),
+         {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user_identity} do
+
+        user_identity_module.create(%{user_id: repo_data.id, identity_provider: auth.provider, provider_uid: auth.uid})
 
         callback(%{assigns: %{ueberauth_auth: auth}}, conn)
     else
@@ -129,5 +125,19 @@ defmodule MishkaSocial.Auth.HandelRequest do
     conn
     |> configure_session(renew: true)
     |> clear_session()
+  end
+
+  defp invalid_social_integrations(conn) do
+    case MishkaSocial.cms_module_loads(MishkaHtmlWeb.HomeLive) do
+      {:ok, :cms_module_loads, login_router_module} ->
+        conn
+        |> put_flash(:error, "Your social network is not connected or it is invalid.")
+        |> redirect(to: "#{MishkaSocial.router().live_path(conn, login_router_module)}")
+
+      {:error, :cms_module_loads, msg} ->
+        conn
+        |> put_flash(:error, msg)
+        |> redirect(to: "/")
+    end
   end
 end
