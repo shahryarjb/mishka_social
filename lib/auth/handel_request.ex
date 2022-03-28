@@ -102,7 +102,7 @@ defmodule MishkaSocial.Auth.HandelRequest do
 
   defp register(auth, conn) do
     with {{:ok, :cms_module_loads, user_module}, :user} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user},
-         {:ok, :add, _error_tag, repo_data} <- user_module.create(%{full_name: auth.info.name, email: auth.info.email}),
+         {:ok, :add, _error_tag, repo_data} <- user_module.create(%{"full_name" => auth.info.name, "email" => auth.info.email}),
          {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user_identity} do
 
         user_identity_module.create(%{user_id: repo_data.id, identity_provider: auth.provider, provider_uid: auth.uid})
