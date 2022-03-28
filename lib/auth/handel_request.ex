@@ -105,7 +105,7 @@ defmodule MishkaSocial.Auth.HandelRequest do
          {:ok, :add, _error_tag, repo_data} <- user_module.create(%{"full_name" => auth.info.name, "email" => auth.info.email}),
          {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user_identity} do
 
-        user_identity_module.create(%{user_id: repo_data.id, identity_provider: auth.provider, provider_uid: auth.uid})
+        user_identity_module.create(%{"user_id" => repo_data.id, "identity_provider" => auth.provider, "provider_uid" => auth.uid})
 
         callback(%{assigns: %{ueberauth_auth: auth}}, conn)
     else
