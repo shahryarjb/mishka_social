@@ -50,7 +50,11 @@ defmodule MishkaSocial.Auth.HandelRequest do
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, user_info.status == :inactive},
          {{:ok, :cms_module_loads, user_token_module}, :user_token_module} <- {MishkaSocial.cms_module_loads(MishkaUser.Token.Token), :user_token_module},
          {:ok, :save_token, token} <- user_token_module.create_token(user_info, :current),
-         {{:ok, :cms_module_loads, home_router_module}, :home_router} <- {MishkaSocial.cms_module_loads(MishkaHtmlWeb.HomeLive), :home_router} do
+         {{:ok, :cms_module_loads, home_router_module}, :home_router} <- {MishkaSocial.cms_module_loads(MishkaHtmlWeb.HomeLive), :home_router},
+         {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user_identity} do
+
+        # We do not need to check this function's answer
+        user_identity_module.create(%{"user_id" => user_info.id, "identity_provider" => auth.provider, "provider_uid" => auth.uid})
 
         conn
         |> renew_session()
