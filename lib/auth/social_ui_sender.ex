@@ -6,8 +6,8 @@ defmodule MishkaSocial.Auth.SocailUiSender do
   @spec render(Phoenix.LiveView.Socket.assigns()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-      <h4 style="font-family: tahoma; color: #6a85b5;">Login/Register with Social networks</h4>
-      <span>
+      <h4 class="mishka-social-auth-title">Login/Register with Social networks</h4>
+      <span class="mishka-social-auth-icons">
         <%= link raw('<i class="bi bi-google"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:google)), method: :post %>
         <%= link raw('<i class="bi bi-github"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:github)), method: :post %>
         <%= link raw('<i class="bi bi-facebook"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:facebook)), method: :post %>
