@@ -51,10 +51,10 @@ defmodule MishkaSocial.Auth.HandelRequest do
          {{:ok, :cms_module_loads, user_token_module}, :user_token_module} <- {MishkaSocial.cms_module_loads(MishkaUser.Token.Token), :user_token_module},
          {:ok, :save_token, token} <- user_token_module.create_token(user_info, :current),
          {{:ok, :cms_module_loads, home_router_module}, :home_router} <- {MishkaSocial.cms_module_loads(MishkaHtmlWeb.HomeLive), :home_router},
-         {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user_identity} do
+         {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.Identity), :user_identity} do
 
         # We do not need to check this function's answer
-        user_identity_module.create(%{"user_id" => user_info.id, "identity_provider" => auth.provider, "provider_uid" => auth.uid})
+        user_identity_module.create(%{"user_id" => user_info.id, "identity_provider" => auth.provider, "provider_uid" => "#{auth.uid}"})
 
         conn
         |> renew_session()
@@ -107,9 +107,9 @@ defmodule MishkaSocial.Auth.HandelRequest do
   defp register(auth, conn) do
     with {{:ok, :cms_module_loads, user_module}, :user} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user},
          {:ok, :add, _error_tag, repo_data} <- user_module.create(%{"full_name" => auth.info.name, "email" => auth.info.email}),
-         {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user_identity} do
+         {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.Identity), :user_identity} do
 
-        user_identity_module.create(%{"user_id" => repo_data.id, "identity_provider" => auth.provider, "provider_uid" => auth.uid})
+        user_identity_module.create(%{"user_id" => repo_data.id, "identity_provider" => auth.provider, "provider_uid" => "#{auth.uid}"})
 
         callback(%{assigns: %{ueberauth_auth: auth}}, conn)
     else
