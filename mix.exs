@@ -27,7 +27,7 @@ defmodule MishkaSocial.MixProject do
 
   defp deps do
     [
-      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
+      {:mishka_installer, "~> 0.0.1"},
       {:ueberauth, "~> 0.7.0"},
       {:ueberauth_google, "~> 0.10.1"},
       {:ueberauth_github, "~> 0.8.1"},
