@@ -32,7 +32,8 @@ defmodule MishkaSocial.MixProject do
       {:ueberauth_google, "~> 0.10.1"},
       {:ueberauth_github, "~> 0.8.1"},
       {:phoenix, "~> 1.6"},
-      {:phoenix_live_view, "~> 0.17.7"}
+      {:phoenix_live_view, "~> 0.17.7"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 
