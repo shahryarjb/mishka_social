@@ -10,9 +10,9 @@ defmodule MishkaSocial.Auth.SocailUiSender do
       <span class="mishka-social-auth-icons">
         <%= link raw('<i class="bi bi-google"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:google)), method: :post %>
         <%= link raw('<i class="bi bi-github"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:github)), method: :post %>
-        <%= link raw('<i class="bi bi-facebook"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:facebook)), method: :post %>
-        <%= link raw('<i class="bi bi-twitter"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:twitter)), method: :post %>
-        <%= link raw('<i class="bi bi-apple"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:apple)), method: :post %>
+        <%= # link raw('<i class="bi bi-facebook"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:facebook)), method: :post %>
+        <%= # link raw('<i class="bi bi-twitter"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:twitter)), method: :post %>
+        <%= # link raw('<i class="bi bi-apple"></i>'), to: MishkaSocial.router().auth_path(@socket, :login, params: params(:apple)), method: :post %>
       </span>
     """
   end

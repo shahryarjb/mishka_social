@@ -4,6 +4,26 @@ defmodule MishkaSocial.Auth.HandelRequest do
   # TODO: it should be changeable
   @social_integrations ["google", "github", "facebook", "twitter"]
 
+  # This is a test init to connect
+  # def handle_social_sender(%MishkaSocial.Auth.Strategy{conn: conn, endpoint: "html", id: "facebook", callback: _callback}) do
+  #   Map.merge(conn, %{request_path: "/auth/facebook", method: "GET"})
+  #   |> Ueberauth.call([
+  #     {{"/auth/facebook", "GET"},
+  #      {Ueberauth.Strategy.Facebook, :run_request,
+  #       %{
+  #         callback_methods: ["GET"],
+  #         callback_params: nil,
+  #         callback_path: "/auth/register?params[endpoint]=html&params[id]=facebook&params[struct]=Elixir.MishkaSocial.Auth.Strategy",
+  #         callback_url: nil,
+  #         options: [],
+  #         request_path: "/auth/facebook",
+  #         strategy: Ueberauth.Strategy.Facebook,
+  #         strategy_name: :facebook
+  #       }}}
+  #   ])
+  #   |> halt()
+  # end
+
   @spec handle_social_sender(MishkaSocial.Auth.Strategy.t()) :: Plug.Conn.t()
   def handle_social_sender(%MishkaSocial.Auth.Strategy{conn: conn, endpoint: "html", id: social, callback: _callback}) when social in @social_integrations do
     Map.merge(conn, %{request_path: "/auth/#{social}", method: "GET"})
@@ -18,6 +38,11 @@ defmodule MishkaSocial.Auth.HandelRequest do
     Map.merge(conn, %{request_path: "/auth/#{social}/callback", method: "GET"})
     |> Ueberauth.call(Ueberauth.init(callback |> Map.to_list))
     |> callback(conn)
+  rescue
+    RuntimeError ->
+      conn
+      |> put_flash(:error, "Unable to access the user's email address, if you made it private or something please change the setting")
+      |> redirect(to: "#{MishkaSocial.router().auth_path(conn, :login)}")
   end
 
   def handel_social_callback(%MishkaSocial.Auth.Strategy{conn: conn}), do: invalid_social_integrations(conn)
@@ -98,15 +123,15 @@ defmodule MishkaSocial.Auth.HandelRequest do
   #   provider: :github,
   #   strategy: Ueberauth.Strategy.Github
   # }
-  defp callback(%{assigns: %{ueberauth_failure: _fails}}, conn)do
+  defp callback(%{assigns: %{ueberauth_failure: _fails}}, conn) do
     conn
     |> put_flash(:error, "Failed to authenticate.")
-    |> redirect(to: "#{MishkaSocial.router().live_path(conn, MishkeInstallerDeveloperWeb.LiveTestPageOne)}")
+    |> redirect(to: "#{MishkaSocial.router().auth_path(conn, :login)}")
   end
 
   defp register(auth, conn) do
     with {{:ok, :cms_module_loads, user_module}, :user} <- {MishkaSocial.cms_module_loads(MishkaUser.User), :user},
-         {:ok, :add, _error_tag, repo_data} <- user_module.create(%{"full_name" => auth.info.name, "email" => auth.info.email}),
+         {:ok, :add, _error_tag, repo_data} <- user_module.direct_create(%{"full_name" => auth.info.name, "email" => auth.info.email}),
          {{:ok, :cms_module_loads, user_identity_module}, :user_identity} <- {MishkaSocial.cms_module_loads(MishkaUser.Identity), :user_identity} do
 
         user_identity_module.create(%{"user_id" => repo_data.id, "identity_provider" => auth.provider, "provider_uid" => "#{auth.uid}"})
