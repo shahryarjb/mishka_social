@@ -1,6 +1,6 @@
 defmodule MishkaSocial.MixProject do
   use Mix.Project
-  @version "0.0.1"
+  @version "0.0.2"
 
   def project do
     [
@@ -27,7 +27,7 @@ defmodule MishkaSocial.MixProject do
 
   defp deps do
     [
-      {:mishka_installer, "~> 0.0.1"},
+      {:mishka_installer, "~> 0.0.2"},
       {:ueberauth, "~> 0.7.0"},
       {:ueberauth_google, "~> 0.10.1"},
       {:ueberauth_github, "~> 0.8.1"},
